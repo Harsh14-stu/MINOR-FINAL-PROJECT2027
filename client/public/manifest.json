@@ -1,0 +1,73 @@
+{
+  "short_name": "SmartBus",
+  "name": "SmartBus - School Bus Management System",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "maskable-icon.png",
+      "type": "image/png",
+      "sizes": "196x196",
+      "purpose": "maskable any"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#3b82f6",
+  "background_color": "#f8fafc",
+  "categories": ["education", "transportation", "utilities"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Track My Bus",
+      "short_name": "Track",
+      "description": "Open live bus tracking",
+      "url": "/student",
+      "icons": [{ "src": "shortcut-track.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "My Children",
+      "short_name": "Children",
+      "description": "View all children tracking",
+      "url": "/parent",
+      "icons": [{ "src": "shortcut-children.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Admin Dashboard",
+      "short_name": "Admin",
+      "description": "Admin control panel",
+      "url": "/admin",
+      "icons": [{ "src": "shortcut-admin.png", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/dashboard.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "screenshots/mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ]
+}
