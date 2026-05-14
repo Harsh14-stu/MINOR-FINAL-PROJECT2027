@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import { MapContainer, TileLayer, Marker, Polyline, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { SHARED_ROUTE_COORDINATES, SHARED_BUS_STOPS, MAP_CONFIG } from '../../utils/constants';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -58,11 +59,7 @@ const DriverDashboard = () => {
   });
   const { connected, sendGPSUpdate } = useSocketContext();
 
-  const routeStops = [
-    { id: 1, name: 'Pickup Point A', lat: 28.6139, lng: 77.2090 },
-    { id: 2, name: 'Pickup Point B', lat: 28.6180, lng: 77.2120 },
-    { id: 3, name: 'School Gate', lat: 28.6200, lng: 77.2150 }
-  ];
+  const routeStops = SHARED_BUS_STOPS;
 
   useEffect(() => {
     fetchDashboard();
@@ -201,14 +198,14 @@ const DriverDashboard = () => {
               
               <div className="flex-1 bg-slate-100 relative overflow-hidden min-h-[350px]">
                 <MapContainer 
-                  center={[routeStops[0].lat, routeStops[0].lng]} 
-                  zoom={14} 
+                  center={[MAP_CONFIG.defaultCenter.lat, MAP_CONFIG.defaultCenter.lng]} 
+                  zoom={MAP_CONFIG.defaultZoom} 
                   style={{ width:'100%', height:'100%', zIndex: 1 }} 
                   zoomControl={true} scrollWheelZoom={true} dragging={true}
                 >
                   <TileLayer url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" attribution="&copy; Google Maps" />
-                  <Polyline positions={routeStops.map(s => [s.lat, s.lng])} color="#1e3a8a" weight={8} opacity={0.5} />
-                  <Polyline positions={routeStops.map(s => [s.lat, s.lng])} color="#2563eb" weight={5} opacity={1} />
+                  <Polyline positions={SHARED_ROUTE_COORDINATES} color="#1e3a8a" weight={8} opacity={0.5} />
+                  <Polyline positions={SHARED_ROUTE_COORDINATES} color="#2563eb" weight={5} opacity={1} />
                   
                   {routeStops.map((stop, i) => {
                     const isDestination = i === routeStops.length - 1;
@@ -218,7 +215,7 @@ const DriverDashboard = () => {
                       </Marker>
                     );
                   })}
-                  <Marker position={[routeStops[currentStopIndex]?.lat || 28.6139, routeStops[currentStopIndex]?.lng || 77.2090]} icon={busIcon}>
+                  <Marker position={[routeStops[currentStopIndex]?.lat || MAP_CONFIG.defaultCenter.lat, routeStops[currentStopIndex]?.lng || MAP_CONFIG.defaultCenter.lng]} icon={busIcon}>
                     <Popup><b>Your Location</b></Popup>
                   </Marker>
                 </MapContainer>

@@ -69,29 +69,22 @@ export const NOTIFICATION_ICONS = {
   route_change: '🛣️'
 };
 
-// Route Stops (Demo Data)
-export const DEMO_ROUTE_STOPS = [
-  {
-    id: 1,
-    name: 'Pickup Point A',
-    lat: 28.6139,
-    lng: 77.2090,
-    order: 1
-  },
-  {
-    id: 2,
-    name: 'Pickup Point B',
-    lat: 28.6180,
-    lng: 77.2120,
-    order: 2
-  },
-  {
-    id: 3,
-    name: 'School Gate',
-    lat: 28.6200,
-    lng: 77.2150,
-    order: 3
-  }
+// CDGI Indore Route Data
+export const SHARED_ROUTE_COORDINATES = [
+  [22.6888, 75.8679], // Bhawarkuan
+  [22.6800, 75.8640], // Rajiv Gandhi Chauraha
+  [22.6650, 75.8450], // Path
+  [22.6450, 75.8250], // Path
+  [22.6393, 75.8197], // Rau Circle
+  [22.6300, 75.8100], // Path
+  [22.6268, 75.8063]  // CDGI Campus
+];
+
+export const SHARED_BUS_STOPS = [
+  { id: 1, name: 'Bhawarkuan', lat: 22.6888, lng: 75.8679, status: 'passed', eta: 'Passed' },
+  { id: 2, name: 'Rajiv Gandhi', lat: 22.6800, lng: 75.8640, status: 'passed', eta: 'Passed' },
+  { id: 3, name: 'Rau Circle', lat: 22.6393, lng: 75.8197, status: 'upcoming', eta: '5 Mins' },
+  { id: 4, name: 'CDGI Campus', lat: 22.6268, lng: 75.8063, status: 'destination', eta: '12 Mins' }
 ];
 
 // Bus Colors
@@ -101,8 +94,8 @@ export const BUS_COLORS = [
 
 // Default Map Settings
 export const MAP_CONFIG = {
-  defaultZoom: 14,
-  defaultCenter: { lat: 28.6139, lng: 77.2090 },
+  defaultZoom: 13,
+  defaultCenter: { lat: 22.6500, lng: 75.8400 },
   styles: [
     {
       featureType: 'poi',

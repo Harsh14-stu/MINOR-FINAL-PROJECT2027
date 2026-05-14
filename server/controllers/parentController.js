@@ -6,6 +6,7 @@ const Message = require('../models/Message');
 const Notification = require('../models/Notification');
 const Route = require('../models/Route');
 const Fee = require('../models/Fee');
+const mongoose = require('mongoose');
 
 exports.getLocation = async (req, res) => {
   try {
@@ -59,11 +60,17 @@ exports.getAttendance = async (req, res) => {
     const { studentId } = req.params;
     const today = new Date().toISOString().split('T')[0];
     
-    // Find today's attendance
-    const record = await Attendance.findOne({ studentId, date: today });
-    
-    // Calculate monthly
-    const monthRecords = await Attendance.find({ studentId, date: { $regex: `^${today.substring(0,7)}` } });
+    let record = null;
+    let monthRecords = [];
+
+    if (mongoose.Types.ObjectId.isValid(studentId)) {
+      // Find today's attendance
+      record = await Attendance.findOne({ studentId, date: today });
+      
+      // Calculate monthly
+      monthRecords = await Attendance.find({ studentId, date: { $regex: `^${today.substring(0,7)}` } });
+    }
+
     const presentCount = monthRecords.filter(r => r.status === 'Present').length;
     const total = monthRecords.length;
     const percentage = total === 0 ? 100 : Math.round((presentCount / total) * 100);
@@ -98,10 +105,14 @@ exports.sos = async (req, res) => {
 exports.getNotifications = async (req, res) => {
   try {
     const { studentId } = req.params;
-    // Find notifications linked to this student (or their parent)
-    const notifications = await Notification.find({ 
-      $or: [{ userId: studentId }] // Will adjust based on auth schema, assuming userId matches
-    }).sort({ createdAt: -1 }).limit(20);
+    let notifications = [];
+
+    if (mongoose.Types.ObjectId.isValid(studentId)) {
+      // Find notifications linked to this student (or their parent)
+      notifications = await Notification.find({ 
+        $or: [{ userId: studentId }] // Will adjust based on auth schema, assuming userId matches
+      }).sort({ createdAt: -1 }).limit(20);
+    }
     
     // Mock data if none found for testing
     if (notifications.length === 0) {

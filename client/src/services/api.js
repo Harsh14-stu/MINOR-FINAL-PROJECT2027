@@ -162,14 +162,14 @@ export const utils = {
 // PARENT API
 // ==============================
 export const parentService = {
-  getBusInfo: (studentId) => api.get(`/parent/bus/${studentId}`),
-  getLocation: (driverId) => api.get(`/parent/location/${driverId}`),
-  getAttendance: (studentId) => api.get(`/parent/attendance/${studentId}`),
-  getNotifications: (studentId) => api.get(`/parent/notifications/${studentId}`),
-  getRoute: (driverId) => api.get(`/parent/route/${driverId}`),
-  getFees: (studentId) => api.get(`/parent/fees/${studentId}`),
-  sendMessage: (data) => api.post('/parent/message', data),
-  sendSOS: (data) => api.post('/parent/sos', data)
+  getBusInfo: (studentId) => api.get(`/api/parent/bus/${studentId}`),
+  getLocation: (driverId) => api.get(`/api/parent/location/${driverId}`),
+  getAttendance: (studentId) => api.get(`/api/parent/attendance/${studentId}`),
+  getNotifications: (studentId) => api.get(`/api/parent/notifications/${studentId}`),
+  getRoute: (driverId) => api.get(`/api/parent/route/${driverId}`),
+  getFees: (studentId) => api.get(`/api/parent/fees/${studentId}`),
+  sendMessage: (data) => api.post('/api/parent/message', data),
+  sendSOS: (data) => api.post('/api/parent/sos', data)
 };
 
 export default api;

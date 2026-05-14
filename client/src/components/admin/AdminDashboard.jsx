@@ -15,9 +15,10 @@ import { useSocketContext } from '../../context/SocketContext';
 import axios from 'axios';
 
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { SHARED_ROUTE_COORDINATES, SHARED_BUS_STOPS, MAP_CONFIG } from '../../utils/constants';
 
 // Bus Icon on Map
 const busIcon = L.divIcon({
@@ -26,6 +27,18 @@ const busIcon = L.divIcon({
     <span style="font-size:20px; filter:drop-shadow(0 2px 2px rgba(0,0,0,0.3));">🚌</span>
   </div>`,
   iconSize: [40, 40], iconAnchor: [20, 20],
+});
+
+const stopIcon = L.divIcon({
+  className: '',
+  html: `<div style="width:16px; height:16px; background-color:#9ca3af; border:3px solid white; border-radius:50%; box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div>`,
+  iconSize: [16, 16], iconAnchor: [8, 8]
+});
+
+const destinationIcon = L.divIcon({
+  className: '',
+  html: `<div style="font-size:24px; filter:drop-shadow(0 2px 2px rgba(0,0,0,0.3));">📍</div>`,
+  iconSize: [24, 24], iconAnchor: [12, 24]
 });
 
 const LiveMap = ({ buses, connected }) => {
@@ -39,8 +52,20 @@ const LiveMap = ({ buses, connected }) => {
         <span className="text-xs font-mono text-cyan-400 tracking-widest">{connected ? 'LIVE TRACKING' : 'OFFLINE'}</span>
       </div>
 
-      <MapContainer center={[lat, lng]} zoom={14} style={{ height: '100%', width: '100%', zIndex: 1 }} zoomControl={true} scrollWheelZoom={true} dragging={true}>
+      <MapContainer center={[MAP_CONFIG.defaultCenter.lat, MAP_CONFIG.defaultCenter.lng]} zoom={MAP_CONFIG.defaultZoom} style={{ height: '100%', width: '100%', zIndex: 1 }} zoomControl={true} scrollWheelZoom={true} dragging={true}>
         <TileLayer url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" attribution="&copy; Google Maps" />
+        
+        <Polyline positions={SHARED_ROUTE_COORDINATES} color="#1e3a8a" weight={8} opacity={0.5} />
+        <Polyline positions={SHARED_ROUTE_COORDINATES} color="#2563eb" weight={5} opacity={1} />
+        
+        {SHARED_BUS_STOPS.map((stop, i) => {
+          const isDestination = i === SHARED_BUS_STOPS.length - 1;
+          return (
+            <Marker key={i} position={[stop.lat, stop.lng]} icon={isDestination ? destinationIcon : stopIcon}>
+              <Popup><b>{stop.name}</b></Popup>
+            </Marker>
+          );
+        })}
         {buses.map(bus => (
           <Marker key={bus.id} position={[bus.lat, bus.lng]} icon={busIcon} eventHandlers={{ click: () => setSelectedBus(bus) }}>
             <Popup>

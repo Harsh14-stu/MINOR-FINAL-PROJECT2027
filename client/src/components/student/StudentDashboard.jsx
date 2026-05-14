@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline } from 'react-leaflet';
 import L from 'leaflet';
@@ -13,6 +13,7 @@ import ReportForm from './ReportForm';
 import NoticePanel from './NoticePanel';
 import ContactAdmin from './ContactAdmin';
 import QRCode from 'react-qr-code';
+import { SHARED_ROUTE_COORDINATES, SHARED_BUS_STOPS } from '../../utils/constants';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -58,12 +59,21 @@ export default function StudentDashboard() {
   const { user, logout } = useAuth();
   const { connected } = useSocketContext();
   const [activeNav, setActiveNav] = useState('dashboard');
-  const [busPos, setBusPos] = useState({ lat: 22.6268, lng: 75.8063 });
+  const [busPos, setBusPos] = useState({ lat: 22.6393, lng: 75.8197 });
   const [speed, setSpeed] = useState(0);
   const [eta, setEta] = useState('Offline');
   const [showQR, setShowQR] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [notifCount] = useState(3);
+
+  const attendanceHistory = useMemo(() => {
+    const totalDays = 30;
+    const presentCount = Math.round((98 / 100) * totalDays);
+    return Array.from({ length: totalDays }, (_, i) => ({
+      day: i + 1,
+      status: i < presentCount ? 'Present' : 'Absent'
+    })).sort(() => Math.random() - 0.5);
+  }, []);
 
   useEffect(() => {}, []);
 
@@ -72,17 +82,8 @@ export default function StudentDashboard() {
     { label: 'Recent', route: 'Route 7 – Home Stop', time: 'Yesterday 3:40 PM', dot: '#a855f7', status: 'Completed' },
   ];
 
-  const routeCoordinates = [
-    [22.6268, 75.8063],
-    [22.6280, 75.8100],
-    [22.6320, 75.8150],
-    [22.6350, 75.8200]
-  ];
-  const busStops = [
-    { id: 1, name: 'Sector 14', lat: 22.6268, lng: 75.8063, eta: 'Passed', status: 'passed' },
-    { id: 2, name: 'Union Square', lat: 22.6320, lng: 75.8150, eta: '2 Mins', status: 'upcoming' },
-    { id: 3, name: 'CDGI Campus', lat: 22.6350, lng: 75.8200, eta: '8 Mins', status: 'upcoming' }
-  ];
+  const routeCoordinates = SHARED_ROUTE_COORDINATES;
+  const busStops = SHARED_BUS_STOPS;
 
   // Glass-dark Panel Style
   const panel3D = {
@@ -149,8 +150,27 @@ export default function StudentDashboard() {
                     <p className="text-2xl font-black text-white font-mono">98%</p>
                   </div>
                 </div>
-                <div className="h-2 rounded-full overflow-hidden" style={{background: 'rgba(255,255,255,0.06)'}}>
-                  <div className="h-full rounded-full" style={{width:'98%', background: 'linear-gradient(90deg, #10b981, #06b6d4)'}}/>
+                <div className="mt-5">
+                  <div className="flex flex-wrap gap-1.5">
+                    {attendanceHistory.map((record, idx) => (
+                      <div 
+                        key={idx} 
+                        className="w-6 h-6 rounded flex items-center justify-center relative group"
+                        style={{ 
+                          background: record.status === 'Present' ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)',
+                          border: `1px solid ${record.status === 'Present' ? 'rgba(16,185,129,0.5)' : 'rgba(239,68,68,0.5)'}`
+                        }}
+                      >
+                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 px-1.5 py-0.5 bg-black/80 text-white text-[9px] rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                          {record.status}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3 flex gap-3 text-[9px] font-mono text-slate-500">
+                    <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-sm bg-emerald-500/20 border border-emerald-500/50" /> Present</div>
+                    <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-sm bg-red-500/20 border border-red-500/50" /> Absent</div>
+                  </div>
                 </div>
                 <p className="text-[10px] font-mono text-slate-400 mt-3 tracking-wide">Excellent! Keep it up 🎉</p>
               </div>

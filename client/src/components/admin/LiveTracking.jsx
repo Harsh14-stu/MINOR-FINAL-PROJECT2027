@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import { MapContainer, TileLayer, Marker, Polyline, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { SHARED_ROUTE_COORDINATES, SHARED_BUS_STOPS, MAP_CONFIG } from '../../utils/constants';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -74,41 +75,24 @@ const MapPanel = ({ selected, connected }) => {
       
       <MapContainer 
         center={[lat, lng]} 
-        zoom={14} 
+        zoom={MAP_CONFIG.defaultZoom} 
         style={{ width:'100%', height:'100%', zIndex: 1 }} 
         zoomControl={true} scrollWheelZoom={true} dragging={true}
       >
         <TileLayer url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" attribution="&copy; Google Maps" />
         
         {/* Visual Route */}
-        <Polyline 
-          positions={[
-            [lat - 0.015, lng - 0.02],
-            [lat - 0.005, lng - 0.005],
-            [lat, lng],
-            [lat + 0.01, lng + 0.015]
-          ]} 
-          color="#1e3a8a" weight={8} opacity={0.5} 
-        />
-        <Polyline 
-          positions={[
-            [lat - 0.015, lng - 0.02],
-            [lat - 0.005, lng - 0.005],
-            [lat, lng],
-            [lat + 0.01, lng + 0.015]
-          ]} 
-          color="#2563eb" weight={5} opacity={1} 
-        />
+        <Polyline positions={SHARED_ROUTE_COORDINATES} color="#1e3a8a" weight={8} opacity={0.5} />
+        <Polyline positions={SHARED_ROUTE_COORDINATES} color="#2563eb" weight={5} opacity={1} />
         
-        {/* End Point / School */}
-        <Marker position={[lat + 0.01, lng + 0.015]} icon={destinationIcon}>
-           <Popup><b>Destination (School)</b></Popup>
-        </Marker>
-
-        {/* Start Point */}
-        <Marker position={[lat - 0.015, lng - 0.02]} icon={stopIcon}>
-           <Popup><b>Origin</b></Popup>
-        </Marker>
+        {SHARED_BUS_STOPS.map((stop, i) => {
+          const isDestination = i === SHARED_BUS_STOPS.length - 1;
+          return (
+            <Marker key={i} position={[stop.lat, stop.lng]} icon={isDestination ? destinationIcon : stopIcon}>
+              <Popup><b>{stop.name}</b></Popup>
+            </Marker>
+          );
+        })}
 
         {/* Bus Marker */}
         <Marker position={[lat, lng]} icon={busIcon}>
